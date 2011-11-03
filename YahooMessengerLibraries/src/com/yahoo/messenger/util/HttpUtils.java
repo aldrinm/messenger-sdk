@@ -10,8 +10,10 @@ import com.yahoo.messenger.exception.HttpException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
+import java.net.HttpURLConnection;
+import java.net.URL;
+//import javax.microedition.io.Connector;
+//import javax.microedition.io.HttpConnection;
 
 
 public class HttpUtils {
@@ -34,14 +36,20 @@ public class HttpUtils {
         }
 
         String s = new String();
-        HttpConnection hc = (HttpConnection)Connector.open(cs);
+        URL url = new URL(cs);
+        HttpURLConnection hc = (HttpURLConnection)url.openConnection();
 
+        hc.setRequestProperty("User-Agent", "Stack/1.0.0.0");
         if (authentication != null) {
 
-            if (!authentication.isUsingOAuth())
+            if (!authentication.isUsingOAuth()) {
                 hc.setRequestProperty("Cookie", authentication.getCookie());
-            else
+            }
+            else {
                 hc.setRequestProperty("Authorization", "OAuth");
+            }
+
+
 
         }
 
@@ -49,7 +57,7 @@ public class HttpUtils {
 
             int rc = hc.getResponseCode();
 
-            InputStream in = hc.openInputStream();
+            InputStream in = hc.getInputStream();
 
             try {
 
@@ -63,7 +71,7 @@ public class HttpUtils {
                 in.close();
             }
 
-            if (rc != HttpConnection.HTTP_OK) {
+            if (rc != HttpURLConnection.HTTP_OK) {
 
                 if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
                     System.err.println("ERROR HTTP RETURN CODE IS: " + rc);
@@ -74,7 +82,7 @@ public class HttpUtils {
             }
 
         } finally {
-            hc.close();
+            hc.disconnect();
         }
 
         if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
@@ -92,8 +100,12 @@ public class HttpUtils {
 
         String s = new String();
 
-        HttpConnection hc = (HttpConnection)Connector.open(cs);
-        hc.setRequestMethod(HttpConnection.POST);
+        URL url = new URL(cs);
+        HttpURLConnection hc = (HttpURLConnection)url.openConnection();
+        hc.setDoOutput(true);
+        hc.setRequestMethod("POST");
+
+        hc.setRequestProperty("User-Agent", "Stack/1.0.0.0");
 
         if (authentication == null) {
             throw new HttpException(HttpException.NO_AUTHENTICATION_GIVEN);
@@ -110,7 +122,7 @@ public class HttpUtils {
             hc.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             hc.setRequestProperty("Content-Length", ""+content.length());
 
-            OutputStream os = hc.openOutputStream();
+            OutputStream os = hc.getOutputStream();
             os.write(content.getBytes());
             
         }
@@ -127,7 +139,7 @@ public class HttpUtils {
             int rc = hc.getResponseCode();
 
 
-            InputStream in = hc.openInputStream();
+            InputStream in = hc.getInputStream();
 
             try {
 
@@ -141,7 +153,7 @@ public class HttpUtils {
                 in.close();
             }
 
-            if (rc != HttpConnection.HTTP_OK) {
+            if (rc != HttpURLConnection.HTTP_OK) {
 
                 if (YahooMessengerConstants.debugHttpRequestResponse == 1) {
                     System.err.println("ERROR HTTP RETURN CODE IS: " + rc);
@@ -152,7 +164,7 @@ public class HttpUtils {
             }
 
         } finally {
-            hc.close();
+            hc.disconnect();
         }
 
         if (YahooMessengerConstants.debugHttpRequestResponse == 1) {

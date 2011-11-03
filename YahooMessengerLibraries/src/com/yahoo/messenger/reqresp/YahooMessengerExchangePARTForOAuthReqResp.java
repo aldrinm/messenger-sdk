@@ -70,6 +70,12 @@ public class YahooMessengerExchangePARTForOAuthReqResp {
 
         System.out.println("OAUTH_TOKEN:" + oauth_token);
 
+        //get the oauth token secret
+        int startIndex = resultString.indexOf("&oauth_token_secret=");
+        int endIndex = resultString.indexOf("&oauth_expires_in=");
+        String oauth_token_secret = resultString.substring(startIndex+"&oauth_token_secret=".length(), endIndex);
+        System.out.println("oauth_token_secret = " + oauth_token_secret);
+
         setAuthenticationToken(
             new YahooMessengerAuthentication(
                 StringUtils.URLEncoder("yahooapis.com"),
@@ -79,7 +85,8 @@ public class YahooMessengerExchangePARTForOAuthReqResp {
                 "0",
                 oauth_token,
                 "1.0",
-                YahooMessengerConstants.authenticationConsumerSecret+"%26"));
+                YahooMessengerConstants.authenticationConsumerSecret+"%26"+oauth_token_secret
+                ));
     }
 
     /**

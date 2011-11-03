@@ -34,9 +34,9 @@ public class YahooMessengerConstants {
             "mobile.rest-core.msg.yahoo.com";
     public static final String stagingServerOAuthURL =
             "stage-ydn.rest-core.msg.yahoo.com";
+    public static final String newStaginUrl = "developer.messenger.yahooapis.com";
 
-    public static final String messengerServerURL =
-            stagingServerURL;
+    public static final String messengerServerURL = newStaginUrl;
     
     public static final String authenticationConsumerKey =
             "dj0yJmk9YmVSZkFRQjJNdU9aJmQ9WVdrOVFtOWhjM1prTnpnbWNHbzlOekkzTmpBMU9UWXkmcz1jb25zdW1lcnNlY3JldCZ4PTJl";

@@ -20,6 +20,7 @@ public class YahooMessengerAuthentication {
     private String oauthToken;
     private String oauthVersion;
     private String oauthSignature;
+    private String oauthTokenSecret;
 
 
     public YahooMessengerAuthentication(String authenticationCookie) {
@@ -33,6 +34,15 @@ public class YahooMessengerAuthentication {
             String nonce, String signatureMethod, String timestamp, String token,
             String version, String signature)
     {
+        this(realm, consumerKey,
+            nonce, signatureMethod, timestamp, token,
+            version, signature, null);
+    }
+
+    public YahooMessengerAuthentication(String realm, String consumerKey,
+            String nonce, String signatureMethod, String timestamp, String token,
+            String version, String signature, String tokenSecret)
+    {
         this.realm = realm;
         this.oauthConsumerKey = consumerKey;
         this.oauthNonce = nonce;
@@ -43,7 +53,7 @@ public class YahooMessengerAuthentication {
         this.oauthSignature = signature;
 
         this.usingOAuth = true;
-
+        this.oauthTokenSecret = tokenSecret;
     }
 
     /**
@@ -179,6 +189,13 @@ public class YahooMessengerAuthentication {
         this.oauthSignature = oauthSignature;
     }
 
+    public String getOauthTokenSecret() {
+        return oauthTokenSecret;
+    }
+
+    public void setOauthTokenSecret(String oauthTokenSecret) {
+        this.oauthTokenSecret = oauthTokenSecret;
+    }
 
     public String getOAuthParameters() {
 
@@ -197,6 +214,25 @@ public class YahooMessengerAuthentication {
           "&oauth_token="+getOauthToken()+
           "&oauth_version="+getOauthVersion()+
           "&oauth_signature="+getOauthSignature();
+    }
+
+    public String getOAuthHeaders() {
+
+        if (!isUsingOAuth()) {
+            return "";
+}
+
+        long timeStamp = System.currentTimeMillis() / 1000;
+
+        return
+          "OAuth realm=\""+getRealm()+"\""+
+          ",oauth_consumer_key=\""+getOauthConsumerKey()+"\""+
+          ",oauth_nonce=\""+getOauthNonce()+"\""+
+          ",oauth_signature_method=\""+getOauthSignatureMethod()+"\""+
+          ",oauth_timestamp=\""+timeStamp+"\""+
+          ",oauth_token=\""+getOauthToken()+"\""+
+          ",oauth_version=\""+getOauthVersion()+"\""+
+          ",oauth_signature=\""+getOauthSignature()+"\"";
     }
 
 
